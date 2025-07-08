@@ -1,0 +1,85 @@
+/* index.css for Header component */
+
+.header-container {
+  background-color: #0b1d51;
+  color: white;
+  padding-left: 48px;
+  padding-right: 48px;
+}
+
+@media screen and (max-width: 576px) {
+  .header-container {
+    padding-left: 15px;
+    padding-right: 5px;
+  }
+}
+
+.header-content-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-heading {
+  display: flex;
+  align-items: center;
+  font-size: 24px;
+  font-weight: bold;
+  font-family: "Roboto";
+}
+
+.logo {
+  font-size: 5px;
+}
+
+@media screen and (max-width: 576px) {
+  .header-heading {
+    font-size: 16px;
+  }
+}
+
+.icon {
+  background-color: #2ed477;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 6px;
+  margin-right: 6px;
+}
+
+.profile-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.profile-icon {
+  background-color: #d1d5db;
+  color: black;
+  font-weight: bold;
+  font-size: 16px;
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media screen and (max-width: 576px) {
+  .profile-icon {
+    height: 25px;
+    width: 25px;
+    font-size: 12px;
+  }
+}
+
+.profile-name {
+  color: white;
+  font-size: 16px;
+}
+
+@media screen and (max-width: 576px) {
+  .profile-name {
+    font-size: 12px;
+  }
+}
