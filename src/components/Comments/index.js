@@ -73,7 +73,7 @@ class Comments extends Component {
   onChangePageSize = (event) => {
     this.setState(
       {
-        pageSize: event.target.value,
+        pageSize: parseInt(event.target.value),
       },
       this.saveState
     );
