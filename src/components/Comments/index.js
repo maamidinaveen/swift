@@ -1,7 +1,5 @@
 import { Component } from "react";
-
 import Header from "../Header";
-
 import { CiSearch } from "react-icons/ci";
 import {
   FaLessThan,
@@ -11,7 +9,6 @@ import {
   FaSortDown,
 } from "react-icons/fa";
 import { TailSpin } from "react-loader-spinner";
-
 import "./index.css";
 
 class Comments extends Component {
@@ -60,14 +57,9 @@ class Comments extends Component {
 
   getCommentsList = async () => {
     const url = `https://jsonplaceholder.typicode.com/comments`;
-    const options = {
-      method: "GET",
-    };
-    const response = await fetch(url, options);
+    const response = await fetch(url);
     const data = await response.json();
-    this.setState({
-      commentsList: data,
-    });
+    this.setState({ commentsList: data });
   };
 
   onChangePageSize = (event) => {
@@ -79,24 +71,11 @@ class Comments extends Component {
     );
   };
 
-  getPaginatedCommentsList = () => {
-    const { commentsList, currentPage, pageSize } = this.state;
-    const startIndex = (currentPage - 1) * pageSize; // Indexing starts from 0th position
-    const endIndex = startIndex + pageSize;
-    return commentsList.slice(startIndex, endIndex);
-  };
-
-  onClickNext = () => {
+  getPaginatedCommentsList = (finalList) => {
     const { currentPage, pageSize } = this.state;
-    if (currentPage * pageSize < 500) {
-      // This logic prevents the page number from increasing if the comments count exceeds 500.
-      this.setState(
-        (prevState) => ({
-          currentPage: prevState.currentPage + 1,
-        }),
-        this.saveState
-      );
-    }
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    return finalList.slice(startIndex, endIndex);
   };
 
   onClickPreviousPage = () => {
@@ -135,18 +114,16 @@ class Comments extends Component {
 
   getSearchBasedComments = (comments) => {
     const { searchInput } = this.state;
-    const list = comments.filter((each) => {
+    return comments.filter((each) => {
       const name = each.name.toLowerCase();
       const email = each.email.toLowerCase();
-      const body = each.body.toLowerCase(); // there is no phone number here
-
+      const body = each.body.toLowerCase();
       return (
         name.includes(searchInput) ||
         email.includes(searchInput) ||
         body.includes(searchInput)
       );
     });
-    return list;
   };
 
   onClickSort = (columnName) => {
@@ -179,69 +156,50 @@ class Comments extends Component {
     }
   };
 
-  ascendingOrder = (searchBasedComments) => {
-    searchBasedComments.sort((a, b) => a.postId - b.postId);
-    return searchBasedComments;
-  };
+  ascendingOrder = (list) => list.sort((a, b) => a.postId - b.postId);
+  descendingOrder = (list) => list.sort((a, b) => b.postId - a.postId);
 
-  descendingOrder = (searchBasedComments) => {
-    searchBasedComments.sort((a, b) => b.postId - a.postId);
-    return searchBasedComments;
-  };
-
-  postBasedComments = (searchBasedComments) => {
+  postBasedComments = (list) => {
     const { sortingOrder } = this.state;
     switch (sortingOrder) {
       case "ASC":
-        return this.ascendingOrder(searchBasedComments);
+        return this.ascendingOrder(list);
       case "DESC":
-        return this.descendingOrder(searchBasedComments);
+        return this.descendingOrder(list);
       case null:
-        return searchBasedComments;
-
       default:
-        return null;
+        return list;
     }
   };
 
-  getAscending = (columnName, searchBasedComments) => {
-    searchBasedComments.sort((a, b) =>
-      a[columnName].localeCompare(b[columnName])
-    );
-    return searchBasedComments;
-  };
+  getAscending = (col, list) =>
+    list.sort((a, b) => a[col].localeCompare(b[col]));
+  getDescending = (col, list) =>
+    list.sort((a, b) => b[col].localeCompare(a[col]));
 
-  getDescending = (columnName, searchBasedComments) => {
-    searchBasedComments.sort((a, b) =>
-      b[columnName].localeCompare(a[columnName])
-    );
-    return searchBasedComments;
-  };
-
-  stringBasedComments = (columnName, searchBasedComments) => {
+  stringBasedComments = (col, list) => {
     const { sortingOrder } = this.state;
     switch (sortingOrder) {
       case "ASC":
-        return this.getAscending(columnName, searchBasedComments);
+        return this.getAscending(col, list);
       case "DESC":
-        return this.getDescending(columnName, searchBasedComments);
+        return this.getDescending(col, list);
       case null:
-        return searchBasedComments;
       default:
-        return null;
+        return list;
     }
   };
 
-  getSortBasedComment = (searchBasedComments) => {
+  getSortBasedComment = (list) => {
     const { sortByColumnName } = this.state;
     if (sortByColumnName === "postId") {
-      return this.postBasedComments(searchBasedComments);
+      return this.postBasedComments(list);
     } else if (sortByColumnName === "name") {
-      return this.stringBasedComments("name", searchBasedComments);
+      return this.stringBasedComments("name", list);
     } else if (sortByColumnName === "email") {
-      return this.stringBasedComments("email", searchBasedComments);
+      return this.stringBasedComments("email", list);
     }
-    return searchBasedComments;
+    return list;
   };
 
   getSortIcon = (columnName) => {
@@ -258,22 +216,6 @@ class Comments extends Component {
   render() {
     const { commentsList, currentPage, pageSize, searchInput } = this.state;
 
-    const totalCommentsCount = commentsList.length;
-
-    const startingPageNumber = (currentPage - 1) * pageSize + 1;
-    let endingPageNumber = currentPage * pageSize;
-    if (endingPageNumber > 500) {
-      endingPageNumber = 500;
-    }
-
-    const paginatedComments = this.getPaginatedCommentsList();
-
-    const searchBasedComments = this.getSearchBasedComments(paginatedComments);
-
-    const sortBasedComments = this.getSortBasedComment(searchBasedComments);
-
-    const hideNumber = currentPage * pageSize >= 500 ? "hide" : null;
-
     if (commentsList.length === 0) {
       return (
         <div className="loader-container">
@@ -281,6 +223,20 @@ class Comments extends Component {
         </div>
       );
     }
+
+    const searchBasedComments = this.getSearchBasedComments(commentsList);
+    const sortBasedComments = this.getSortBasedComment(searchBasedComments);
+    const paginatedComments = this.getPaginatedCommentsList(sortBasedComments);
+
+    const totalCommentsCount = sortBasedComments.length;
+    const startingPageNumber = (currentPage - 1) * pageSize + 1;
+    let endingPageNumber = currentPage * pageSize;
+    if (endingPageNumber > totalCommentsCount) {
+      endingPageNumber = totalCommentsCount;
+    }
+
+    const hideNumber = currentPage * pageSize >= 500 ? "hide" : null;
+
     return (
       <>
         <Header />
@@ -323,6 +279,7 @@ class Comments extends Component {
               />
             </div>
           </div>
+
           <div className="dashboard-container">
             <div className="header-cell-container">
               <p className="header-cell-name first-cell">Post ID</p>
@@ -331,7 +288,7 @@ class Comments extends Component {
               <p className="header-cell-name">Comment</p>
             </div>
 
-            {sortBasedComments.map((each) => (
+            {paginatedComments.map((each) => (
               <div className="post-container" key={each.id}>
                 <p className="cell first-cell">{each.postId}</p>
                 <p className="cell">{each.name}</p>
@@ -340,6 +297,7 @@ class Comments extends Component {
               </div>
             ))}
           </div>
+
           <div className="pagination-container">
             <p className="page-number">
               {startingPageNumber}-{endingPageNumber} of {totalCommentsCount}{" "}
@@ -358,7 +316,7 @@ class Comments extends Component {
             <button
               type="button"
               className={`page-button ${hideNumber}`}
-              onClick={this.onClickNext}
+              onClick={this.onClickNextPage}
             >
               {currentPage + 1}
             </button>
