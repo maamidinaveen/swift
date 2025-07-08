@@ -63,6 +63,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-right: 10px;
 }
 
 @media screen and (max-width: 576px) {
@@ -82,4 +83,10 @@
   .profile-name {
     font-size: 12px;
   }
+}
+
+.link-item-container {
+  text-decoration: none;
+  display: flex;
+  align-items: center;
 }

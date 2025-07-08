@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 import UserContext from "../../context/UserContext";
 import "./index.css";
 
@@ -23,8 +25,10 @@ const Header = () => (
               <span className="icon">S</span>WIFT
             </div>
             <div className="profile-container">
-              <div className="profile-icon">{initial}</div>
-              <p className="profile-name">{name}</p>
+              <Link to="/" className="link-item-container">
+                <div className="profile-icon">{initial}</div>
+                <p className="profile-name">{name}</p>
+              </Link>
             </div>
           </div>
         </div>
